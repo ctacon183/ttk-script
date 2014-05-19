@@ -1,0 +1,316 @@
+package ttk.script;
+
+import java.io.StringReader;
+import java.util.Arrays;
+import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.httpclient.HostConfiguration;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.methods.PostMethod;
+
+/**
+ *
+ * @author ctacon
+ */
+public class Start {
+<<<<<<< .mine
+
+=======
+    
+>>>>>>> .r38834
+    static HttpClient httpClient;
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        try {
+<<<<<<< .mine
+            String parString = "";
+            for (String s : args) {
+                parString += s + "\n";
+            }
+            Properties properties = new Properties();
+            properties.load(new StringReader(parString));
+            if (properties.isEmpty()) {
+                System.out.println("Отсутствуют параметры");
+                System.out.println("Доступные ключи username password timeout");
+                return;
+            }
+            String username = properties.getProperty("username");
+            String password = properties.getProperty("password");
+            int timeout = 500;
+            if (properties.getProperty("timeout") != null) {
+                timeout = Integer.parseInt(properties.getProperty("timeout"));
+            }
+
+
+
+=======
+            String parString = "";
+            for (String s : args) {
+                parString += s + "\n";
+            }
+            Properties properties = new Properties();
+            properties.load(new StringReader(parString));
+            if (properties.isEmpty()) {
+                System.out.println("Отсутствуют параметры");
+                System.out.println("Доступные ключи username password timeout");
+                return;
+            }
+            String username = properties.getProperty("username");
+            String password = properties.getProperty("password");
+            int timeout = 100;
+            if (properties.getProperty("timeout") != null) {
+                timeout = Integer.parseInt(properties.getProperty("timeout"));
+            }
+            
+>>>>>>> .r38834
+            
+            
+            httpClient = new HttpClient();
+            HostConfiguration configuration = new HostConfiguration();
+            configuration.setHost("bonus.myttk.ru", 80);
+            httpClient.setHostConfiguration(configuration);
+            String oldCode = "";
+<<<<<<< .mine
+            System.out.println("Выполняю авторизацию");
+            postAuth("/spend/action2014/index.php?login=yes", username, password);
+            System.out.println("Авторизация пройдена");
+            while (true) {
+                String response = getCode("/ajax/action2014/get_code.php");
+                if (response != null) {
+                    System.out.println(response);
+                    Matcher m = Pattern.compile("\"code\":\"([-0-9-]+)\"\\}").matcher(response.replaceAll("\\s", ""));
+                    if (m.find()) {
+                        String newCode = m.group(1);
+                        if (!newCode.equalsIgnoreCase(oldCode)) {
+                            System.out.println("Получил новый код = " + newCode);
+                            String result = activateCode("/ajax/action2014/activate_code.php", newCode);
+                            if (!result.startsWith("{\"error\":") || result.contains("\"activate\":true")) {
+                                System.out.println("Код успешно активирован = " + newCode);
+                                return;
+                            } else {
+                                System.out.println("Ошибка активации кода. Продолжаю!");
+                                
+                            }
+
+                            oldCode = newCode;
+
+                        }
+                    } else {
+                        System.err.println("Не найден код в ответе");
+                    }
+                } else {
+                    System.err.println("Не получил ответ");
+                }
+                Thread.currentThread().sleep(timeout);
+=======
+            System.out.println("Выполняю авторизацию");
+            postAuth("/spend/action2014/index.php?login=yes", username, password);
+            System.out.println("Авторизация пройдена");
+            while (true) {
+//                String response = getCode("/ajax/action2014/get_code.php");
+                String response = postErud("/ajax/action2014/erudition.php","63","310");
+//                if (response != null) {
+//                    System.out.println(response);
+//                    Matcher m = Pattern.compile("\"code\":\"([-0-9-]+)\"\\}").matcher(response.replaceAll("\\s", ""));
+//                    if (m.find()) {
+//                        String newCode = m.group(1);
+//                        if (!newCode.equalsIgnoreCase(oldCode)) {
+//                            System.out.println("Получил новый код = " + newCode);
+//                            String result = activateCode("/ajax/action2014/activate_code.php", newCode);
+//                            try {
+//                                System.out.println(Hex.decodeHex(result.toCharArray()));
+//                            } catch (Exception ex) {
+//                                
+//                            }
+//                            if (!result.startsWith("{\"error\":false") || result.contains("\"activate\":true")) {
+//                                System.out.println("Код успешно активирован = " + newCode);
+//                                return;
+//                            } else {
+//                                System.out.println("Ошибка активации кода. Продолжаю!");
+//                            }
+//                            
+//                            oldCode = newCode;
+//                            
+//                        }
+//                    } else {
+//                        System.err.println("Не найден код в ответе");
+//                    }
+//                } else {
+//                    System.err.println("Не получил ответ");
+//                }
+                Thread.currentThread().sleep(timeout);
+>>>>>>> .r38834
+            }
+
+        } catch (Exception ex) {
+            System.err.println(ex);
+        }
+
+    }
+
+    private static String getCode(String url) {
+        GetMethod method = null;
+        //System.out.println("Выполняю get запрос");
+        try {
+            method = new GetMethod(url);
+
+            method.addRequestHeader("Accept", "application/json, text/javascript, */*; q=0.01");
+            method.addRequestHeader("Accept-Charset", "ISO-8859-1,utf-8;q=0.7,*;q=0.3");
+            method.addRequestHeader("Accept-Language", "en-US,en;q=0.8,ru;q=0.6");
+            method.addRequestHeader("Connection", "keep-alive");
+            method.addRequestHeader("Host", "bonus.myttk.ru");
+            method.addRequestHeader("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.63 Safari/537.36");
+            method.addRequestHeader("X-Requested-With", "XMLHttpRequest");
+
+            httpClient.executeMethod(method);
+            String response = new String(method.getResponseBody(), method.getResponseCharSet());
+            //logger.debug(response);
+            return response;
+        } catch (Exception ex) {
+            System.err.println(ex);
+            if (method != null) {
+                method.abort();
+            }
+            return "";
+        } finally {
+            if (method != null) {
+                method.releaseConnection();
+            }
+        }
+    }
+<<<<<<< .mine
+
+    private static String postAuth(String url, String username, String password) {
+=======
+    
+    private static String postAuth(String url, String username, String password) {
+>>>>>>> .r38834
+        PostMethod method = null;
+        //System.out.println("Выполняю post запрос");
+        try {
+            method = new PostMethod(url);
+            method.addParameter("AUTH_FORM", "Y");
+            method.addParameter("TYPE", "AUTH");
+            method.addParameter("backurl", "/spend/action2014/index.php");
+            method.addParameter("USER_LOGIN", username);
+            method.addParameter("USER_PASSWORD", password);
+            method.addParameter("USER_REMEMBER", "Y");
+            method.addParameter("Login", "Войти");
+
+            method.addRequestHeader("Accept", "application/json, text/javascript, */*; q=0.01");
+            method.addRequestHeader("Accept-Charset", "ISO-8859-1,utf-8;q=0.7,*;q=0.3");
+            method.addRequestHeader("Accept-Language", "en-US,en;q=0.8,ru;q=0.6");
+            method.addRequestHeader("Connection", "keep-alive");
+            method.addRequestHeader("Host", "bonus.myttk.ru");
+            method.addRequestHeader("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.63 Safari/537.36");
+            method.addRequestHeader("X-Requested-With", "XMLHttpRequest");
+
+            httpClient.executeMethod(method);
+            String response = new String(method.getResponseBody(), method.getResponseCharSet());
+            // System.out.println("hhtpstatus= " + method.getStatusCode());
+            // logger.debug(response);
+            return response;
+        } catch (Exception ex) {
+            System.err.println(ex);
+            if (method != null) {
+                method.abort();
+            }
+            return "";
+        } finally {
+            if (method != null) {
+                method.releaseConnection();
+            }
+        }
+    }
+
+     private static String postErud(String url, String idq, String ida) {
+        PostMethod method = null;
+        try {
+            method = new PostMethod(url);
+            method.addParameter("idq", idq);
+            method.addParameter("ida", ida);    
+            
+            method.addRequestHeader("Accept", "application/json, text/javascript, */*; q=0.01");
+            method.addRequestHeader("Accept-Charset", "ISO-8859-1,utf-8;q=0.7,*;q=0.3");
+            method.addRequestHeader("Accept-Language", "en-US,en;q=0.8,ru;q=0.6");
+            method.addRequestHeader("Connection", "keep-alive");
+            method.addRequestHeader("Host", "bonus.myttk.ru");
+            method.addRequestHeader("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.63 Safari/537.36");
+            method.addRequestHeader("X-Requested-With", "XMLHttpRequest");
+            
+            httpClient.executeMethod(method);
+            String response = new String(method.getResponseBody(), method.getResponseCharSet());
+            return response;
+        } catch (Exception ex) {
+            System.err.println(ex);
+            if (method != null) {
+                method.abort();
+            }
+            return "";
+        } finally {
+            if (method != null) {
+                method.releaseConnection();
+            }
+        }
+    }
+    
+    
+    private static String activateCode(String url, String code) {
+        PostMethod method = null;
+        //System.out.println("Выполняю post запрос");
+        try {
+            method = new PostMethod(url);
+            int i = 1;
+            for (String part : code.split("-")) {
+                method.addParameter("c" + i, part);
+                i++;
+            }
+<<<<<<< .mine
+            System.out.println(Arrays.toString(method.getParameters()));
+
+=======
+            System.out.println(Arrays.toString(method.getParameters()));
+            
+>>>>>>> .r38834
+            method.addRequestHeader("Accept", "application/json, text/javascript, */*; q=0.01");
+            method.addRequestHeader("Accept-Charset", "ISO-8859-1,utf-8;q=0.7,*;q=0.3");
+            method.addRequestHeader("Accept-Language", "en-US,en;q=0.8,ru;q=0.6");
+            method.addRequestHeader("Connection", "keep-alive");
+            method.addRequestHeader("Host", "bonus.myttk.ru");
+            method.addRequestHeader("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.63 Safari/537.36");
+            method.addRequestHeader("X-Requested-With", "XMLHttpRequest");
+
+
+            httpClient.executeMethod(method);
+            String response = new String(method.getResponseBody(), "UTF-8");
+            System.out.println(response);
+            // System.out.println("hhtpstatus= " + method.getStatusCode());
+            // logger.debug(response);
+            return response;
+        } catch (Exception ex) {
+            System.err.println(ex);
+            if (method != null) {
+                method.abort();
+            }
+            return "";
+        } finally {
+            if (method != null) {
+                method.releaseConnection();
+            }
+        }
+    }
+<<<<<<< .mine
+
+  
+=======
+
+    
+
+>>>>>>> .r38834
+}
